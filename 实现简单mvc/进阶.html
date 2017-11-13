@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+</head>
+<body>
+	<div id="div1"></div>
+	<div id="div2"></div>
+	<script type="text/javascript">
+		
+		function Model(value) {
+			this._value = typeof value ==='undefined' ? '':value;
+			this._listeners = [];
+
+		}
+
+		Model.prototype.set = function (value) {
+			var self = this;
+			self._value = value;
+
+			setTimeout(function () {
+				self._listeners.forEach(function (listener) {
+					listener.call(self,value);
+				})
+			});
+
+		}
+
+		Model.prototype.watch = function (listener) {
+			this._listeners.push(listener);
+		}
+
+		Model.prototype.bind = function (node) {
+			this.watch(function (value) {
+				node.innerHTML = value;
+			})
+		}
+
+		var model = new Model();
+
+		// 优势在于多个绑定，多了一层抽象，一个model对应多个view，并没有解决多个model的问题
+		model.bind(document.getElementById('div1'))
+		model.bind(document.getElementById('div2'))
+		model.set('hello, this is a div');
+	</script>
+</body>
+</html>
